@@ -25,6 +25,12 @@
   -webkit-text-size-adjust: 100%;
 }
 
+body {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
 .nav-container {
   display: flex;
   flex-direction: row-reverse;
