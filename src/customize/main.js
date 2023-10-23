@@ -1,7 +1,9 @@
+// Imports
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { GUI } from 'dat.gui'
 
+// Basic threejs setup
 const gui = new GUI()
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
@@ -15,52 +17,419 @@ document.body.appendChild(renderer.domElement)
 
 new OrbitControls(camera, renderer.domElement);
 
-const boxGeometry = new THREE.BoxGeometry(1, 1, 1);
-const boxMaterial = new THREE.MeshPhysicalMaterial({ color: 0x00ff00 });
-const cube = new THREE.Mesh(boxGeometry, boxMaterial);
-cube.castShadow = true;
-scene.add(cube);
+// Car object
+const car = new THREE.Group();
 
-const cylinderGeometry = new THREE.CylinderGeometry(2.7, 3, 0.5, 21, 21);
-const cylinderMaterial = new THREE.MeshPhysicalMaterial({ color: 0xffffff });
-const cylinder = new THREE.Mesh(cylinderGeometry, cylinderMaterial);
-cylinder.receiveShadow = true;
-cylinder.position.set(0, -0.7, 0);
-scene.add(cylinder);
+const carMainGeometry = new THREE.BoxGeometry(3, 0.8, 1.5);
+const carMainMaterial = new THREE.MeshMatcapMaterial({ color: 0x00ffff });
+const carMain = new THREE.Mesh(carMainGeometry, carMainMaterial);
+carMain.position.y = 0.4;
+carMain.castShadow = true;
+car.add(carMain);
 
+const carCenterTopGeometry = new THREE.CylinderGeometry(1, 1, 1.3, 3, 1, false, 0, Math.PI);
+const carCenterTopMaterial = new THREE.MeshMatcapMaterial({ color: 0x00ffff });
+const carCenterTop = new THREE.Mesh(carCenterTopGeometry, carCenterTopMaterial);
+carCenterTop.rotateX(Math.PI / 2);
+carCenterTop.rotateY(Math.PI / 2);
+carCenterTop.position.x = -0.1;
+carCenterTop.position.y = 0.5;
+carCenterTop.castShadow = true;
+car.add(carCenterTop);
+
+const carRearMainLength = 0.1, carRearMainWidth = 0.1;
+
+const carRearMainShape = new THREE.Shape();
+carRearMainShape.moveTo(0, 0);
+carRearMainShape.lineTo(0, carRearMainWidth);
+carRearMainShape.lineTo(carRearMainLength, carRearMainWidth);
+carRearMainShape.lineTo(carRearMainLength, 0);
+carRearMainShape.lineTo(0, 0);
+
+const carRearMainSettings = {
+    steps: 1,
+    depth: 1,
+    bevelEnabled: true,
+    bevelThickness: 0.5,
+    bevelSize: 1,
+    bevelOffset: 1,
+    bevelSegments: 1
+};
+
+const carRearMainGeometry = new THREE.ExtrudeGeometry(carRearMainShape, carRearMainSettings);
+const carRearMainMaterial = new THREE.MeshMatcapMaterial({ color: 0x00ffff });
+const carRearMain = new THREE.Mesh(carRearMainGeometry, carRearMainMaterial);
+carRearMain.rotateY(Math.PI / 2);
+carRearMain.position.x = -1.2;
+carRearMain.position.z = 0.03;
+carRearMain.position.y = 0.385;
+carRearMain.scale.set(0.35, 0.19, 1);
+carRearMain.castShadow = true;
+car.add(carRearMain);
+
+const carFrontMainLength = 0.1, carFrontMainWidth = 0.1;
+
+const carFrontMainShape = new THREE.Shape();
+carFrontMainShape.moveTo(0, 0);
+carFrontMainShape.lineTo(0, carFrontMainWidth);
+carFrontMainShape.lineTo(carFrontMainLength, carFrontMainWidth);
+carFrontMainShape.lineTo(carFrontMainLength, 0);
+carFrontMainShape.lineTo(0, 0);
+
+const carFrontMainSettings = {
+    steps: 1,
+    depth: 1,
+    bevelEnabled: true,
+    bevelThickness: 0.5,
+    bevelSize: 1,
+    bevelOffset: 1,
+    bevelSegments: 1
+};
+
+const carFrontMainGeometry = new THREE.ExtrudeGeometry(carFrontMainShape, carFrontMainSettings);
+const carFrontMainMaterial = new THREE.MeshMatcapMaterial({ color: 0x00ffff });
+const carFrontMain = new THREE.Mesh(carFrontMainGeometry, carFrontMainMaterial);
+carFrontMain.rotateY(Math.PI / 2);
+carFrontMain.position.x = 0.5;
+carFrontMain.position.z = 0.03;
+carFrontMain.position.y = 0.385;
+carFrontMain.scale.set(0.35, 0.19, 1);
+carFrontMain
+car.add(carFrontMain);
+
+const carRearWheelBarGeometry = new THREE.CylinderGeometry(0.1, 0.1, 1.85);
+const carRearWheelBarMaterial = new THREE.MeshMatcapMaterial({ color: 0xffffff });
+const carRearWheelBar = new THREE.Mesh(carRearWheelBarGeometry, carRearWheelBarMaterial);
+carRearWheelBar.rotateX(Math.PI / 2);
+carRearWheelBar.position.x = -0.8;
+car.add(carRearWheelBar);
+
+const carFrontWheelBarGeometry = new THREE.CylinderGeometry(0.1, 0.1, 1.85);
+const carFrontWheelBarMaterial = new THREE.MeshMatcapMaterial({ color: 0xffffff });
+const carFrontWheelBar = new THREE.Mesh(carFrontWheelBarGeometry, carFrontWheelBarMaterial);
+carFrontWheelBar.rotateX(Math.PI / 2);
+carFrontWheelBar.position.x = 0.8;
+car.add(carFrontWheelBar);
+
+const carRearWheelFenderRightGeometry = new THREE.CylinderGeometry(0.4, 0.4, 0.4, 32, 1, true, Math.PI / 2, Math.PI);
+const carRearWheelFenderRightMaterial = new THREE.MeshMatcapMaterial({ color: 0x00ffff });
+const carRearWheelFenderRight = new THREE.Mesh(carRearWheelFenderRightGeometry, carRearWheelFenderRightMaterial);
+carRearWheelFenderRight.rotateX(Math.PI / 2);
+carRearWheelFenderRight.position.x = -0.8;
+carRearWheelFenderRight.position.z = 0.7;
+carRearWheelFenderRight.castShadow = true;
+car.add(carRearWheelFenderRight);
+
+const carRearWheelFenderLeftGeometry = new THREE.CylinderGeometry(0.4, 0.4, 0.4, 32, 1, true, Math.PI / 2, Math.PI);
+const carRearWheelFenderLeftMaterial = new THREE.MeshMatcapMaterial({ color: 0x00ffff });
+const carRearWheelFenderLeft = new THREE.Mesh(carRearWheelFenderLeftGeometry, carRearWheelFenderLeftMaterial);
+carRearWheelFenderLeft.rotateX(Math.PI / 2);
+carRearWheelFenderLeft.position.x = -0.8;
+carRearWheelFenderLeft.position.z = -0.7;
+carRearWheelFenderLeft.castShadow = true;
+car.add(carRearWheelFenderLeft);
+
+const carFrontWheelFenderRightGeometry = new THREE.CylinderGeometry(0.4, 0.4, 0.4, 32, 1, true, Math.PI / 2, Math.PI);
+const carFrontWheelFenderRightMaterial = new THREE.MeshMatcapMaterial({ color: 0x00ffff });
+const carFrontWheelFenderRight = new THREE.Mesh(carFrontWheelFenderRightGeometry, carFrontWheelFenderRightMaterial);
+carFrontWheelFenderRight.rotateX(Math.PI / 2);
+carFrontWheelFenderRight.position.x = 0.8;
+carFrontWheelFenderRight.position.z = 0.7;
+carFrontWheelFenderRight.castShadow = true;
+car.add(carFrontWheelFenderRight);
+
+const carFrontWheelFenderLeftGeometry = new THREE.CylinderGeometry(0.4, 0.4, 0.4, 32, 1, true, Math.PI / 2, Math.PI);
+const carFrontWheelFenderLeftMaterial = new THREE.MeshMatcapMaterial({ color: 0x00ffff });
+const carFrontWheelFenderLeft = new THREE.Mesh(carFrontWheelFenderLeftGeometry, carFrontWheelFenderLeftMaterial);
+carFrontWheelFenderLeft.rotateX(Math.PI / 2);
+carFrontWheelFenderLeft.position.x = 0.8;
+carFrontWheelFenderLeft.position.z = -0.7;
+carFrontWheelFenderLeft.castShadow = true;
+car.add(carFrontWheelFenderLeft);
+
+const carRearWheelRightGeometry = new THREE.CylinderGeometry(0.3, 0.3, 0.4);
+const carRearWheelRightMaterial = new THREE.MeshMatcapMaterial({ color: 0x000000 });
+const carRearWheelRight = new THREE.Mesh(carRearWheelRightGeometry, carRearWheelRightMaterial);
+carRearWheelRight.rotateX(Math.PI / 2);
+carRearWheelRight.position.x = -0.8;
+carRearWheelRight.position.z = 0.7;
+carRearWheelRight.castShadow = true;
+car.add(carRearWheelRight);
+
+const carRearWheelLeftGeometry = new THREE.CylinderGeometry(0.3, 0.3, 0.4);
+const carRearWheelLeftMaterial = new THREE.MeshMatcapMaterial({ color: 0x000000 });
+const carRearWheelLeft = new THREE.Mesh(carRearWheelLeftGeometry, carRearWheelLeftMaterial);
+carRearWheelLeft.rotateX(Math.PI / 2);
+carRearWheelLeft.position.x = -0.8;
+carRearWheelLeft.position.z = -0.7;
+carRearWheelLeft.castShadow = true;
+car.add(carRearWheelLeft);
+
+const carFrontWheelRightGeometry = new THREE.CylinderGeometry(0.3, 0.3, 0.3);
+const carFrontWheelRightMaterial = new THREE.MeshMatcapMaterial({ color: 0x000000 });
+const carFrontWheelRight = new THREE.Mesh(carFrontWheelRightGeometry, carFrontWheelRightMaterial);
+carFrontWheelRight.rotateX(Math.PI / 2);
+carFrontWheelRight.position.x = 0.8;
+carFrontWheelRight.position.z = 0.75;
+carFrontWheelRight.castShadow = true;
+car.add(carFrontWheelRight);
+
+const carFrontWheelLeftGeometry = new THREE.CylinderGeometry(0.3, 0.3, 0.3);
+const carFrontWheelLeftMaterial = new THREE.MeshMatcapMaterial({ color: 0x000000 });
+const carFrontWheelLeft = new THREE.Mesh(carFrontWheelLeftGeometry, carFrontWheelLeftMaterial);
+carFrontWheelLeft.rotateX(Math.PI / 2);
+carFrontWheelLeft.position.x = 0.8;
+carFrontWheelLeft.position.z = -0.75;
+carFrontWheelLeft.castShadow = true;
+car.add(carFrontWheelLeft);
+
+// Car platform
+const carPlatformGeometry = new THREE.CylinderGeometry(3.7, 4, 0.5, 256);
+const carPlatformMaterial = new THREE.MeshPhysicalMaterial({ color: 0xffffff });
+const carPlatform = new THREE.Mesh(carPlatformGeometry, carPlatformMaterial);
+carPlatform.receiveShadow = true;
+carPlatform.position.set(0, -0.545, 0);
+
+// Truck object
+const truck = new THREE.Group();
+
+const truckMainGeometry = new THREE.BoxGeometry(5, 0.8, 1.5);
+const truckMainMaterial = new THREE.MeshMatcapMaterial({ color: 0x00ffff });
+const truckMain = new THREE.Mesh(truckMainGeometry, truckMainMaterial);
+truckMain.position.y = 0.4;
+truckMain.castShadow = true;
+truck.add(truckMain);
+
+const truckCenterTopGeomtery = new THREE.CylinderGeometry(1, 1, 1.3, 3, 1, false, 0, Math.PI);
+const truckCenterTopMaterial = new THREE.MeshMatcapMaterial({ color: 0x00ffff });
+const truckCenterTop = new THREE.Mesh(truckCenterTopGeomtery, truckCenterTopMaterial);
+truckCenterTop.rotateX(Math.PI / 2);
+truckCenterTop.rotateY(Math.PI / 2);
+truckCenterTop.position.x = 1.4;
+truckCenterTop.position.y = 0.8;
+truckCenterTop.castShadow = true;
+truck.add(truckCenterTop);
+
+const truckFrontMainLength = 0.1, truckFrontMainWidth = 0.1;
+
+const truckFrontMainShape = new THREE.Shape();
+truckFrontMainShape.moveTo(0, 0);
+truckFrontMainShape.lineTo(0, truckFrontMainWidth);
+truckFrontMainShape.lineTo(truckFrontMainLength, truckFrontMainWidth);
+truckFrontMainShape.lineTo(truckFrontMainLength, 0);
+truckFrontMainShape.lineTo(0, 0);
+
+const truckFrontMainSettings = {
+    steps: 1,
+    depth: 1,
+    bevelEnabled: true,
+    bevelThickness: 0.5,
+    bevelSize: 1,
+    bevelOffset: 1,
+    bevelSegments: 1
+};
+
+const truckFrontMainGeometry = new THREE.ExtrudeGeometry(truckFrontMainShape, truckFrontMainSettings);
+const truckFrontMainMaterial = new THREE.MeshMatcapMaterial({ color: 0x00ffff });
+const truckFrontMain = new THREE.Mesh(truckFrontMainGeometry, truckFrontMainMaterial);
+truckFrontMain.rotateY(Math.PI / 2);
+truckFrontMain.position.x = 1.04;
+truckFrontMain.position.z = 0.008;
+truckFrontMain.position.y = 0.38;
+truckFrontMain.scale.set(0.35, 0.19, 1);
+truckFrontMain.castShadow = true;
+truck.add(truckFrontMain);
+
+const truckRearWheel1BarGeometry = new THREE.CylinderGeometry(0.1, 0.1, 1.85);
+const truckRearWheel1BarMaterial = new THREE.MeshMatcapMaterial({ color: 0xffffff });
+const truckRearWheel1Bar = new THREE.Mesh(truckRearWheel1BarGeometry, truckRearWheel1BarMaterial);
+truckRearWheel1Bar.rotateX(Math.PI / 2);
+truckRearWheel1Bar.position.x = -1.8;
+truck.add(truckRearWheel1Bar);
+
+const truckRearWheel2BarGeometry = new THREE.CylinderGeometry(0.1, 0.1, 1.85);
+const truckRearWheel2BarMaterial = new THREE.MeshMatcapMaterial({ color: 0xffffff });
+const trucRrearWheel2Bar = new THREE.Mesh(truckRearWheel2BarGeometry, truckRearWheel2BarMaterial);
+trucRrearWheel2Bar.rotateX(Math.PI / 2);
+trucRrearWheel2Bar.position.x = -0.9;
+truck.add(trucRrearWheel2Bar);
+
+const truckFrontWheelBarGeometry = new THREE.CylinderGeometry(0.1, 0.1, 1.85);
+const truckFrontWheelBarMaterial = new THREE.MeshMatcapMaterial({ color: 0xffffff });
+const truckFrontWheelBar = new THREE.Mesh(truckFrontWheelBarGeometry, truckFrontWheelBarMaterial);
+truckFrontWheelBar.rotateX(Math.PI / 2);
+truckFrontWheelBar.position.x = 1.2;
+truck.add(truckFrontWheelBar);
+
+
+const truckRearWheel1FenderRightGeometry = new THREE.CylinderGeometry(0.45, 0.45, 0.4, 32, 1, true, Math.PI / 2, Math.PI);
+const truckRearWheel1FenderRightMaterial = new THREE.MeshMatcapMaterial({ color: 0x00ffff });
+const truckRearWheel1FenderRight = new THREE.Mesh(truckRearWheel1FenderRightGeometry, truckRearWheel1FenderRightMaterial);
+truckRearWheel1FenderRight.rotateX(Math.PI / 2);
+truckRearWheel1FenderRight.position.x = -1.8;
+truckRearWheel1FenderRight.position.z = 0.7;
+truckRearWheel1FenderRight.castShadow = true;
+truck.add(truckRearWheel1FenderRight);
+
+const truckRearWheel1FenderLeftGeometry = new THREE.CylinderGeometry(0.45, 0.45, 0.4, 32, 1, true, Math.PI / 2, Math.PI);
+const truckRearWheel1FenderLeftMaterial = new THREE.MeshMatcapMaterial({ color: 0x00ffff });
+const truckRearWheel1FenderLeft = new THREE.Mesh(truckRearWheel1FenderLeftGeometry, truckRearWheel1FenderLeftMaterial);
+truckRearWheel1FenderLeft.rotateX(Math.PI / 2);
+truckRearWheel1FenderLeft.position.x = -1.8;
+truckRearWheel1FenderLeft.position.z = -0.7;
+truckRearWheel1FenderLeft.castShadow = true;
+truck.add(truckRearWheel1FenderLeft);
+
+const truckRearWheel2FenderRightGeometry = new THREE.CylinderGeometry(0.45, 0.45, 0.4, 32, 1, true, Math.PI / 2, Math.PI);
+const truckRearWheel2FenderRightMaterial = new THREE.MeshMatcapMaterial({ color: 0x00ffff });
+const truckRearWheel2FenderRight = new THREE.Mesh(truckRearWheel2FenderRightGeometry, truckRearWheel2FenderRightMaterial);
+truckRearWheel2FenderRight.rotateX(Math.PI / 2);
+truckRearWheel2FenderRight.position.x = -0.9;
+truckRearWheel2FenderRight.position.z = 0.7;
+truckRearWheel2FenderRight.castShadow = true;
+truck.add(truckRearWheel2FenderRight);
+
+const truckRearWheel2FenderLeftGeometry = new THREE.CylinderGeometry(0.45, 0.45, 0.4, 32, 1, true, Math.PI / 2, Math.PI);
+const truckRearWheel2FenderLeftMaterial = new THREE.MeshMatcapMaterial({ color: 0x00ffff });
+const truckRearWheel2FenderLeft = new THREE.Mesh(truckRearWheel2FenderLeftGeometry, truckRearWheel2FenderLeftMaterial);
+truckRearWheel2FenderLeft.rotateX(Math.PI / 2);
+truckRearWheel2FenderLeft.position.x = -0.9;
+truckRearWheel2FenderLeft.position.z = -0.7;
+truckRearWheel2FenderLeft.castShadow = true;
+truck.add(truckRearWheel2FenderLeft);
+
+const truckFrontWheelFenderRightGeometry = new THREE.CylinderGeometry(0.45, 0.45, 0.4, 32, 1, true, Math.PI / 2, Math.PI);
+const truckFrontWheelFenderRightMaterial = new THREE.MeshMatcapMaterial({ color: 0x00ffff });
+const truckFrontWheelFenderRight = new THREE.Mesh(truckFrontWheelFenderRightGeometry, truckFrontWheelFenderRightMaterial);
+truckFrontWheelFenderRight.rotateX(Math.PI / 2);
+truckFrontWheelFenderRight.position.x = 1.2;
+truckFrontWheelFenderRight.position.z = 0.7;
+truckFrontWheelFenderRight.castShadow = true;
+truck.add(truckFrontWheelFenderRight);
+
+const truckFrontWheelFenderLeftGeometry = new THREE.CylinderGeometry(0.45, 0.45, 0.4, 32, 1, true, Math.PI / 2, Math.PI);
+const truckFrontWheelFenderLeftMaterial = new THREE.MeshMatcapMaterial({ color: 0x00ffff });
+const truckFrontWheelFenderLeft = new THREE.Mesh(truckFrontWheelFenderLeftGeometry, truckFrontWheelFenderLeftMaterial);
+truckFrontWheelFenderLeft.rotateX(Math.PI / 2);
+truckFrontWheelFenderLeft.position.x = 1.2;
+truckFrontWheelFenderLeft.position.z = -0.7;
+truckFrontWheelFenderLeft.castShadow = true;
+truck.add(truckFrontWheelFenderLeft);
+
+
+const truckRearWheel1RightGeometry = new THREE.CylinderGeometry(0.4, 0.4, 0.3);
+const truckRearWheel1RightMaterial = new THREE.MeshMatcapMaterial({ color: 0x000000 });
+const truckRearWheel1Right = new THREE.Mesh(truckRearWheel1RightGeometry, truckRearWheel1RightMaterial);
+truckRearWheel1Right.rotateX(Math.PI / 2);
+truckRearWheel1Right.position.x = -1.8;
+truckRearWheel1Right.position.z = 0.75;
+truckRearWheel1Right.castShadow = true;
+truck.add(truckRearWheel1Right);
+
+const truckRearWheel1LeftGeometry = new THREE.CylinderGeometry(0.4, 0.4, 0.3);
+const truckRearWheel1LeftMaterial = new THREE.MeshMatcapMaterial({ color: 0x000000 });
+const truckRearWheel1Left = new THREE.Mesh(truckRearWheel1LeftGeometry, truckRearWheel1LeftMaterial);
+truckRearWheel1Left.rotateX(Math.PI / 2);
+truckRearWheel1Left.position.x = -1.8;
+truckRearWheel1Left.position.z = -0.75;
+truckRearWheel1Left.castShadow = true;
+truck.add(truckRearWheel1Left);
+
+const truckRearWheel2RightGeometry = new THREE.CylinderGeometry(0.4, 0.4, 0.3);
+const truckRearWheel2RightMaterial = new THREE.MeshMatcapMaterial({ color: 0x000000 });
+const truckRearWheel2Right = new THREE.Mesh(truckRearWheel2RightGeometry, truckRearWheel2RightMaterial);
+truckRearWheel2Right.rotateX(Math.PI / 2);
+truckRearWheel2Right.position.x = -0.9;
+truckRearWheel2Right.position.z = 0.75;
+truckRearWheel2Right.castShadow = true;
+truck.add(truckRearWheel2Right);
+
+const truckRearWheel2LeftGeometry = new THREE.CylinderGeometry(0.4, 0.4, 0.3);
+const truckRearWheel2LeftMaterial = new THREE.MeshMatcapMaterial({ color: 0x000000 });
+const truckRearWheel2Left = new THREE.Mesh(truckRearWheel2LeftGeometry, truckRearWheel2LeftMaterial);
+truckRearWheel2Left.rotateX(Math.PI / 2);
+truckRearWheel2Left.position.x = -0.9;
+truckRearWheel2Left.position.z = -0.75;
+truckRearWheel2Left.castShadow = true;
+truck.add(truckRearWheel2Left);
+
+const truckFrontWheelRightGeometry = new THREE.CylinderGeometry(0.4, 0.4, 0.3);
+const truckFrontWheelRightMaterial = new THREE.MeshMatcapMaterial({ color: 0x000000 });
+const truckFrontWheelRight = new THREE.Mesh(truckFrontWheelRightGeometry, truckFrontWheelRightMaterial);
+truckFrontWheelRight.rotateX(Math.PI / 2);
+truckFrontWheelRight.position.x = 1.2;
+truckFrontWheelRight.position.z = 0.75;
+truckFrontWheelRight.castShadow = true;
+truck.add(truckFrontWheelRight);
+
+const truckFrontWheelLeftGeometry = new THREE.CylinderGeometry(0.4, 0.4, 0.3);
+const truckFrontWheelLeftMaterial = new THREE.MeshMatcapMaterial({ color: 0x000000 });
+const truckFrontWheelLeft = new THREE.Mesh(truckFrontWheelLeftGeometry, truckFrontWheelLeftMaterial);
+truckFrontWheelLeft.rotateX(Math.PI / 2);
+truckFrontWheelLeft.position.x = 1.2;
+truckFrontWheelLeft.position.z = -0.75;
+truckFrontWheelLeft.castShadow = true;
+truck.add(truckFrontWheelLeft);
+
+// Truck platform
+const truckPlatformGeometry = new THREE.CylinderGeometry(4.2, 4.5, 0.5, 256);
+const truckPlatformMaterial = new THREE.MeshPhysicalMaterial({ color: 0xffffff });
+const truckPlatform = new THREE.Mesh(truckPlatformGeometry, truckPlatformMaterial);
+truckPlatform.receiveShadow = true;
+truckPlatform.position.set(0, -0.545, 0);
+
+truck.position.y = 0.09;
+
+// Scene
+scene.add(car);
+scene.add(carPlatform);
+scene.add(truck);
+scene.add(truckPlatform);
+
+car.visible = true;
+carPlatform.visible = true;
+truck.visible = false;
+truckPlatform.visible = false;
+
+// Animation
 function animate() {
     requestAnimationFrame(animate);
 
-    cube.rotation.y += 0.005;
-    cylinder.rotation.y += 0.005;
+    car.rotation.y += 0.005;
+    carPlatform.rotation.y += 0.005;
+    truck.rotation.y += 0.005;
+    truckPlatform.rotation.y += 0.005;
 
     renderer.render(scene, camera);
 }
 
 animate();
 
-const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+// Ambient light
+const ambientLight = new THREE.AmbientLight(0xffffff, 1);
 scene.add(ambientLight)
 
-const directionalLight = new THREE.DirectionalLight(0xffffff, 0.5);
+// Directional light
+const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
 directionalLight.position.set(2, 3, 4);
 directionalLight.castShadow = true;
 const directionalLightHelper = new THREE.DirectionalLightHelper(directionalLight, 1);
 scene.add(directionalLight, directionalLightHelper);
 
-const ambientLightFolder = gui.addFolder('Ambient Light')
+// Controls
+// Lighting folder
+const lightingFolder = gui.addFolder('Lighting');
+// Ambient light controls
+const ambientLightFolder = lightingFolder.addFolder('Ambient Light')
 const ambientLightSettings = {
     color: ambientLight.color.getHex()
 };
-
 ambientLightFolder.add(ambientLight, 'visible');
-
 ambientLightFolder.add(ambientLight, 'intensity', 0, 1, 0.25);
-
 ambientLightFolder.addColor(ambientLightSettings, 'color').onChange((value) => ambientLight.color.set(value));
-ambientLightFolder.open()
 
-const directionalLightFolder = gui.addFolder('Directional Light');
+// Directional light controls
+const directionalLightFolder = lightingFolder.addFolder('Directional Light');
 const directionalLightSettings = {
     visible: true,
     color: directionalLight.color.getHex(),
@@ -68,12 +437,9 @@ const directionalLightSettings = {
     positionY: directionalLight.position.y,
     positionZ: directionalLight.position.z
 };
-
 directionalLightFolder.add(directionalLightSettings, 'visible').onChange((value) => directionalLight.visible = value);
 directionalLightFolder.add(directionalLight, 'intensity', 0, 1, 0.25);
-
 directionalLightFolder.addColor(directionalLightSettings, 'color').onChange((value) => directionalLight.color.set(value));
-
 directionalLightFolder.add(directionalLightSettings, 'positionX', -10, 10).onChange((value) => {
     directionalLight.position.x = value;
     directionalLightHelper.update();
@@ -86,38 +452,35 @@ directionalLightFolder.add(directionalLightSettings, 'positionZ', -10, 10).onCha
     directionalLight.position.z = value;
     directionalLightHelper.update();
 });
-
 directionalLightFolder.add(directionalLight, 'castShadow').onChange((value) => directionalLightHelper.visible = value);
-directionalLightFolder.open();
 
-const cylinderFolder = gui.addFolder('Cylinder');
-const cylinderSettings = {
-    visible: true,
-    color: cylinderMaterial.color.getHex(),
-};
-const cylinderParams = {
-    radiusTop: cylinder.geometry.parameters.radiusTop,
-    radiusBottom: cylinder.geometry.parameters.radiusBottom,
-    height: cylinder.geometry.parameters.height,
-    radialSegments: cylinder.geometry.parameters.radialSegments,
-    heightSegments: cylinder.geometry.parameters.heightSegments,
-};
-cylinderFolder.add(cylinderSettings, 'visible').onChange((value) => cylinder.visible = value);
-cylinderFolder.addColor(cylinderSettings, 'color').onChange((value) => cylinderMaterial.color.set(value));
-cylinderFolder.add(cylinderParams, 'radiusTop', 0, 10).onChange((value) => {
-    cylinder.geometry = new THREE.CylinderGeometry(value, cylinderParams.radiusBottom, cylinderParams.height, cylinderParams.radialSegments, cylinderParams.heightSegments, cylinderParams.openEnded, cylinderParams.thetaStart, cylinderParams.thetaLength);
-});
-cylinderFolder.add(cylinderParams, 'radiusBottom', 0, 10).onChange((value) => {
-    cylinder.geometry = new THREE.CylinderGeometry(cylinderParams.radiusTop, value, cylinderParams.height, cylinderParams.radialSegments, cylinderParams.heightSegments, cylinderParams.openEnded, cylinderParams.thetaStart, cylinderParams.thetaLength);
-});
-cylinderFolder.add(cylinderParams, 'height', 0, 10).onChange((value) => {
-    cylinder.geometry = new THREE.CylinderGeometry(cylinderParams.radiusTop, cylinderParams.radiusBottom, value, cylinderParams.radialSegments, cylinderParams.heightSegments, cylinderParams.openEnded, cylinderParams.thetaStart, cylinderParams.thetaLength);
-});
-cylinderFolder.add(cylinderParams, 'radialSegments', 0, 64).onChange((value) => {
-    cylinder.geometry = new THREE.CylinderGeometry(cylinderParams.radiusTop, cylinderParams.radiusBottom, cylinderParams.height, value, cylinderParams.heightSegments, cylinderParams.openEnded, cylinderParams.thetaStart, cylinderParams.thetaLength);
-});
-cylinderFolder.add(cylinderParams, 'heightSegments', 0, 64).onChange((value) => {
-    cylinder.geometry = new THREE.CylinderGeometry(cylinderParams.radiusTop, cylinderParams.radiusBottom, cylinderParams.height, cylinderParams.radialSegments, value, cylinderParams.openEnded, cylinderParams.thetaStart, cylinderParams.thetaLength);
-});
-cylinderFolder.open();
+// Choosing vehice
+const carCheckbox = document.getElementById('car');
+const truckCheckbox = document.getElementById('truck');
+carCheckbox.disabled = true;
 
+carCheckbox.addEventListener("change", function () {
+    if (carCheckbox.checked) {
+        carCheckbox.disabled = true;
+        truckCheckbox.disabled = false;
+        truckCheckbox.checked = false;
+
+        car.visible = true;
+        carPlatform.visible = true;
+        truck.visible = false;
+        truckPlatform.visible = false;
+    }
+});
+
+truckCheckbox.addEventListener("change", function () {
+    if (truckCheckbox.checked) {
+        truckCheckbox.disabled = true;
+        carCheckbox.disabled = false;
+        carCheckbox.checked = false;
+
+        car.visible = false;
+        carPlatform.visible = false;
+        truck.visible = true;
+        truckPlatform.visible = true;
+    }
+});
