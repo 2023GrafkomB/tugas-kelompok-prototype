@@ -110,3 +110,9 @@ body {
   background-color: var(--background-color);
   padding: 7px;
 }
+
+.choose {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+}
