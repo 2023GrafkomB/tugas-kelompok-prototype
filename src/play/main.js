@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
+//import { car, truck, is_car } from '../customize/main';
 
 const renderer = new THREE.WebGLRenderer();
 renderer.shadowMap.enabled = true;
@@ -32,23 +33,42 @@ orbit.update();
 const axisHelper = new THREE.AxesHelper(5);
 scene.add(axisHelper);
 
+
+
 const boxGeometry = new THREE.BoxGeometry();
 const boxMaterial = new THREE.MeshStandardMaterial({ color: 0x00FF00 });
 const box = new THREE.Mesh(boxGeometry, boxMaterial);
 scene.add(box);
+box.castShadow = true;
 box.position.set(0, 0.5, 0);
 
 //create sun like lighting from the top
-const sunLight = new THREE.DirectionalLight(0xFFD700, 7.5); 
-sunLight.position.set(100, 45, 0); 
-sunLight.castShadow = true; 
+const sunLight = new THREE.DirectionalLight(0xFFD700, 6.5); 
+sunLight.position.set(100, 45, 25);
+sunLight.castShadow = true;
+// Adjust shadow camera properties
+sunLight.shadow.mapSize.width = 1024;
+sunLight.shadow.mapSize.height = 1024;
+// Configure the shadow camera's position, target, and other properties
+const shadowCamera = sunLight.shadow.camera;
+const sceneSize = 780;
+shadowCamera.left = -sceneSize / 2;
+shadowCamera.right = sceneSize / 2;
+shadowCamera.top = sceneSize / 2;
+shadowCamera.bottom = -sceneSize / 2;
+shadowCamera.near = 0.1;
+shadowCamera.far = 500; // Extend the far value as needed
 scene.add(sunLight);
+
 
 scene.fog = new THREE.Fog(0xC0C0C0, 0, 250);
 
 //world
-const planeGeometry = new THREE.PlaneGeometry(1080, 1080);
+const planeGeometry = new THREE.PlaneGeometry(200, 1050);
+const groundtextureLoader = new THREE.TextureLoader();
+const groundTexture = groundtextureLoader.load("images/grass.jpg");
 const planeMaterial = new THREE.MeshPhysicalMaterial({
+  map: groundTexture,
   color: 0x2AAA8A,
   side: THREE.DoubleSide
 });
@@ -59,7 +79,7 @@ plane.receiveShadow = true;
 
 
 // Road config
-const RoadGeometry = new THREE.PlaneGeometry(10, 1080);
+const RoadGeometry = new THREE.PlaneGeometry(10, 1050);
 const RoadMaterial = new THREE.MeshStandardMaterial({
   color: 0x000000,
   side: THREE.DoubleSide
@@ -71,7 +91,7 @@ road.rotation.x = -0.5 * Math.PI;
 road.receiveShadow = true;
 
 //barrier
-const barrierRightGeo =  new THREE.BoxGeometry(0.5, 1, 1080);
+const barrierRightGeo =  new THREE.BoxGeometry(0.5, 1, 950);
 const barrierMaterial = new THREE.MeshStandardMaterial({
     color: 0xff0000
 });
@@ -82,15 +102,42 @@ scene.add(barrierLeft);
 barrierRight.position.x = 5.120;
 barrierLeft.position.x = -5.120;
 
+//roadmark
+const whiteMarkGeo = new THREE.BoxGeometry(0.25, 0.25, 950);
+const roadmarkMats = new THREE.MeshStandardMaterial({
+  color: 0xffffff
+});
+const whiteLeft = new THREE.Mesh(whiteMarkGeo, roadmarkMats);
+const whiteRight = new THREE.Mesh(whiteMarkGeo, roadmarkMats);
+scene.add(whiteLeft);
+scene.add(whiteRight);
+whiteLeft.position.set(4.620, 0, 0);
+whiteRight.position.set(-4.620, 0, 0);
+
+//leftBuilding
+const leftBuildingGeo = new THREE.BoxGeometry(10, 15, 1050);
+const buildingmats = new THREE.MeshStandardMaterial({
+  color: 0x000000
+});
+const leftBuilding = new THREE.Mesh(leftBuildingGeo, buildingmats);
+const RightBuilding = new THREE.Mesh(leftBuildingGeo, buildingmats);
+scene.add(leftBuilding);
+scene.add(RightBuilding);
+leftBuilding.position.x = -18.120;
+RightBuilding.position.x = 18.120;
+
+
 const CreateStreetLight = (posX, posY, posZ) => {
   var poleGeometry = new THREE.CylinderGeometry(0.1, 0.1, 3, 32);
   var poleMaterial = new THREE.MeshStandardMaterial({ color: 0x888888 });
   var pole = new THREE.Mesh(poleGeometry, poleMaterial);
+  pole.castShadow = true;
 
   // Create a light bulb
   var bulbGeometry = new THREE.SphereGeometry(0.5, 32, 32);
   var bulbMaterial = new THREE.MeshStandardMaterial({ color: 0xFFFF00 });
   var bulb = new THREE.Mesh(bulbGeometry, bulbMaterial);
+  bulb.castShadow = true;
 
   bulb.position.set(posX, posY+1, posZ);
   pole.position.set(posX, posY, posZ);
@@ -104,12 +151,15 @@ const CreateTree = (posX, posY, posZ) => {
     const trunkGeometry = new THREE.CylinderGeometry(0.2, 0.2, 1, 8);
     const trunkMaterial = new THREE.MeshStandardMaterial({ color: 0x8B4513 });
     const trunk = new THREE.Mesh(trunkGeometry, trunkMaterial);
+    trunk.castShadow = true;
     
 
     // Create the foliage (green part of the tree)
     const foliageGeometry = new THREE.ConeGeometry(1, 3, 8);
     const foliageMaterial = new THREE.MeshStandardMaterial({ color: 0x228B22 });
     const foliage = new THREE.Mesh(foliageGeometry, foliageMaterial);
+    foliage.castShadow = true;
+
 
     trunk.position.set(posX, posY, posZ);
     foliage.position.set(posX, posY+2, posZ);
@@ -124,6 +174,7 @@ const CreateTube = (posX, posY, posZ) => {
   var poleMaterial = new THREE.MeshStandardMaterial({ color: 0x888888 });
   var pole = new THREE.Mesh(poleGeometry, poleMaterial);
   pole.position.set(posX, posY, posZ);
+  pole.castShadow = true;
 
   scene.add(pole);
 };
@@ -165,7 +216,7 @@ for(let i = 0; i< 100; i++){
 function wrapCar(car, maxDistance) {
   // Define the distance at which the car "wraps" to the other set of lights
   if (car.position.z < -maxDistance) {
-    car.position.z = 150
+    car.position.z = 285;
   }
 }
 
@@ -178,12 +229,9 @@ const animate = () => {
   // WASD movement for the box
    //box.position.z -= moveDistance;
    
-
-  if (keyStates.w) {
-    box.position.z -= moveDistance;
-  }
+  box.position.z -= moveDistance;
   if (keyStates.s) {
-    box.position.z += moveDistance;
+    box.position.z += 0;
   }
   if (keyStates.a) {
     if(box.position.x <= barrierLeft.position.x + 0.75){
@@ -211,9 +259,9 @@ const animate = () => {
   // headlight.position.lerp(targetHeadlightPosition, headlightDampingFactor);
 
   camera.lookAt(box.position);
+  renderer.render(scene, camera);
 
   wrapCar(box, maxDistance);
-  renderer.render(scene, camera);
 };
 
 const keyStates = {
