@@ -116,3 +116,28 @@ body {
   bottom: 0;
   left: 0;
 }
+
+.color-selection {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  display: none;
+}
+
+#green {
+  background-color: green;
+}
+
+#blue {
+  background-color: blue;
+}
+
+#red {
+  background-color: red;
+}
+
+.part-selection {
+  position: absolute;
+  top: 25%;
+  right: 25%;
+}
