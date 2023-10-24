@@ -484,3 +484,5 @@ truckCheckbox.addEventListener("change", function () {
         truckPlatform.visible = true;
     }
 });
+
+export{car, truck};

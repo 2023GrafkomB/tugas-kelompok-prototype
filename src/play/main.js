@@ -1,6 +1,5 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
-//import { car, truck, is_car } from '../customize/main';
 
 const renderer = new THREE.WebGLRenderer();
 renderer.shadowMap.enabled = true;
@@ -33,14 +32,181 @@ orbit.update();
 const axisHelper = new THREE.AxesHelper(5);
 scene.add(axisHelper);
 
+const car = new THREE.Group();
 
+const carMainGeometry = new THREE.BoxGeometry(3, 0.8, 1.5);
+const carMainMaterial = new THREE.MeshMatcapMaterial({ color: 0x00ffff });
+const carMain = new THREE.Mesh(carMainGeometry, carMainMaterial);
+carMain.position.y = 0.4;
+carMain.castShadow = true;
+car.add(carMain);
 
-const boxGeometry = new THREE.BoxGeometry();
-const boxMaterial = new THREE.MeshStandardMaterial({ color: 0x00FF00 });
-const box = new THREE.Mesh(boxGeometry, boxMaterial);
-scene.add(box);
-box.castShadow = true;
-box.position.set(0, 0.5, 0);
+const carCenterTopGeometry = new THREE.CylinderGeometry(1, 1, 1.3, 3, 1, false, 0, Math.PI);
+const carCenterTopMaterial = new THREE.MeshMatcapMaterial({ color: 0x00ffff });
+const carCenterTop = new THREE.Mesh(carCenterTopGeometry, carCenterTopMaterial);
+carCenterTop.rotateX(Math.PI / 2);
+carCenterTop.rotateY(Math.PI / 2);
+carCenterTop.position.x = -0.1;
+carCenterTop.position.y = 0.5;
+carCenterTop.castShadow = true;
+car.add(carCenterTop);
+
+const carRearMainLength = 0.1, carRearMainWidth = 0.1;
+
+const carRearMainShape = new THREE.Shape();
+carRearMainShape.moveTo(0, 0);
+carRearMainShape.lineTo(0, carRearMainWidth);
+carRearMainShape.lineTo(carRearMainLength, carRearMainWidth);
+carRearMainShape.lineTo(carRearMainLength, 0);
+carRearMainShape.lineTo(0, 0);
+
+const carRearMainSettings = {
+    steps: 1,
+    depth: 1,
+    bevelEnabled: true,
+    bevelThickness: 0.5,
+    bevelSize: 1,
+    bevelOffset: 1,
+    bevelSegments: 1
+};
+
+const carRearMainGeometry = new THREE.ExtrudeGeometry(carRearMainShape, carRearMainSettings);
+const carRearMainMaterial = new THREE.MeshMatcapMaterial({ color: 0x00ffff });
+const carRearMain = new THREE.Mesh(carRearMainGeometry, carRearMainMaterial);
+carRearMain.rotateY(Math.PI / 2);
+carRearMain.position.x = -1.2;
+carRearMain.position.z = 0.03;
+carRearMain.position.y = 0.385;
+carRearMain.scale.set(0.35, 0.19, 1);
+carRearMain.castShadow = true;
+car.add(carRearMain);
+
+const carFrontMainLength = 0.1, carFrontMainWidth = 0.1;
+
+const carFrontMainShape = new THREE.Shape();
+carFrontMainShape.moveTo(0, 0);
+carFrontMainShape.lineTo(0, carFrontMainWidth);
+carFrontMainShape.lineTo(carFrontMainLength, carFrontMainWidth);
+carFrontMainShape.lineTo(carFrontMainLength, 0);
+carFrontMainShape.lineTo(0, 0);
+
+const carFrontMainSettings = {
+    steps: 1,
+    depth: 1,
+    bevelEnabled: true,
+    bevelThickness: 0.5,
+    bevelSize: 1,
+    bevelOffset: 1,
+    bevelSegments: 1
+};
+
+const carFrontMainGeometry = new THREE.ExtrudeGeometry(carFrontMainShape, carFrontMainSettings);
+const carFrontMainMaterial = new THREE.MeshMatcapMaterial({ color: 0x00ffff });
+const carFrontMain = new THREE.Mesh(carFrontMainGeometry, carFrontMainMaterial);
+carFrontMain.rotateY(Math.PI / 2);
+carFrontMain.position.x = 0.5;
+carFrontMain.position.z = 0.03;
+carFrontMain.position.y = 0.385;
+carFrontMain.scale.set(0.35, 0.19, 1);
+carFrontMain
+car.add(carFrontMain);
+
+const carRearWheelBarGeometry = new THREE.CylinderGeometry(0.1, 0.1, 1.85);
+const carRearWheelBarMaterial = new THREE.MeshMatcapMaterial({ color: 0xffffff });
+const carRearWheelBar = new THREE.Mesh(carRearWheelBarGeometry, carRearWheelBarMaterial);
+carRearWheelBar.rotateX(Math.PI / 2);
+carRearWheelBar.position.x = -0.8;
+car.add(carRearWheelBar);
+
+const carFrontWheelBarGeometry = new THREE.CylinderGeometry(0.1, 0.1, 1.85);
+const carFrontWheelBarMaterial = new THREE.MeshMatcapMaterial({ color: 0xffffff });
+const carFrontWheelBar = new THREE.Mesh(carFrontWheelBarGeometry, carFrontWheelBarMaterial);
+carFrontWheelBar.rotateX(Math.PI / 2);
+carFrontWheelBar.position.x = 0.8;
+car.add(carFrontWheelBar);
+
+const carRearWheelFenderRightGeometry = new THREE.CylinderGeometry(0.4, 0.4, 0.4, 32, 1, true, Math.PI / 2, Math.PI);
+const carRearWheelFenderRightMaterial = new THREE.MeshMatcapMaterial({ color: 0x00ffff });
+const carRearWheelFenderRight = new THREE.Mesh(carRearWheelFenderRightGeometry, carRearWheelFenderRightMaterial);
+carRearWheelFenderRight.rotateX(Math.PI / 2);
+carRearWheelFenderRight.position.x = -0.8;
+carRearWheelFenderRight.position.z = 0.7;
+carRearWheelFenderRight.castShadow = true;
+car.add(carRearWheelFenderRight);
+
+const carRearWheelFenderLeftGeometry = new THREE.CylinderGeometry(0.4, 0.4, 0.4, 32, 1, true, Math.PI / 2, Math.PI);
+const carRearWheelFenderLeftMaterial = new THREE.MeshMatcapMaterial({ color: 0x00ffff });
+const carRearWheelFenderLeft = new THREE.Mesh(carRearWheelFenderLeftGeometry, carRearWheelFenderLeftMaterial);
+carRearWheelFenderLeft.rotateX(Math.PI / 2);
+carRearWheelFenderLeft.position.x = -0.8;
+carRearWheelFenderLeft.position.z = -0.7;
+carRearWheelFenderLeft.castShadow = true;
+car.add(carRearWheelFenderLeft);
+
+const carFrontWheelFenderRightGeometry = new THREE.CylinderGeometry(0.4, 0.4, 0.4, 32, 1, true, Math.PI / 2, Math.PI);
+const carFrontWheelFenderRightMaterial = new THREE.MeshMatcapMaterial({ color: 0x00ffff });
+const carFrontWheelFenderRight = new THREE.Mesh(carFrontWheelFenderRightGeometry, carFrontWheelFenderRightMaterial);
+carFrontWheelFenderRight.rotateX(Math.PI / 2);
+carFrontWheelFenderRight.position.x = 0.8;
+carFrontWheelFenderRight.position.z = 0.7;
+carFrontWheelFenderRight.castShadow = true;
+car.add(carFrontWheelFenderRight);
+
+const carFrontWheelFenderLeftGeometry = new THREE.CylinderGeometry(0.4, 0.4, 0.4, 32, 1, true, Math.PI / 2, Math.PI);
+const carFrontWheelFenderLeftMaterial = new THREE.MeshMatcapMaterial({ color: 0x00ffff });
+const carFrontWheelFenderLeft = new THREE.Mesh(carFrontWheelFenderLeftGeometry, carFrontWheelFenderLeftMaterial);
+carFrontWheelFenderLeft.rotateX(Math.PI / 2);
+carFrontWheelFenderLeft.position.x = 0.8;
+carFrontWheelFenderLeft.position.z = -0.7;
+carFrontWheelFenderLeft.castShadow = true;
+car.add(carFrontWheelFenderLeft);
+
+const carRearWheelRightGeometry = new THREE.CylinderGeometry(0.3, 0.3, 0.4);
+const carRearWheelRightMaterial = new THREE.MeshMatcapMaterial({ color: 0x000000 });
+const carRearWheelRight = new THREE.Mesh(carRearWheelRightGeometry, carRearWheelRightMaterial);
+carRearWheelRight.rotateX(Math.PI / 2);
+carRearWheelRight.position.x = -0.8;
+carRearWheelRight.position.z = 0.7;
+carRearWheelRight.castShadow = true;
+car.add(carRearWheelRight);
+
+const carRearWheelLeftGeometry = new THREE.CylinderGeometry(0.3, 0.3, 0.4);
+const carRearWheelLeftMaterial = new THREE.MeshMatcapMaterial({ color: 0x000000 });
+const carRearWheelLeft = new THREE.Mesh(carRearWheelLeftGeometry, carRearWheelLeftMaterial);
+carRearWheelLeft.rotateX(Math.PI / 2);
+carRearWheelLeft.position.x = -0.8;
+carRearWheelLeft.position.z = -0.7;
+carRearWheelLeft.castShadow = true;
+car.add(carRearWheelLeft);
+
+const carFrontWheelRightGeometry = new THREE.CylinderGeometry(0.3, 0.3, 0.3);
+const carFrontWheelRightMaterial = new THREE.MeshMatcapMaterial({ color: 0x000000 });
+const carFrontWheelRight = new THREE.Mesh(carFrontWheelRightGeometry, carFrontWheelRightMaterial);
+carFrontWheelRight.rotateX(Math.PI / 2);
+carFrontWheelRight.position.x = 0.8;
+carFrontWheelRight.position.z = 0.75;
+carFrontWheelRight.castShadow = true;
+car.add(carFrontWheelRight);
+
+const carFrontWheelLeftGeometry = new THREE.CylinderGeometry(0.3, 0.3, 0.3);
+const carFrontWheelLeftMaterial = new THREE.MeshMatcapMaterial({ color: 0x000000 });
+const carFrontWheelLeft = new THREE.Mesh(carFrontWheelLeftGeometry, carFrontWheelLeftMaterial);
+carFrontWheelLeft.rotateX(Math.PI / 2);
+carFrontWheelLeft.position.x = 0.8;
+carFrontWheelLeft.position.z = -0.75;
+carFrontWheelLeft.castShadow = true;
+car.add(carFrontWheelLeft);
+
+car.rotateY(Math.PI/2); 
+
+scene.add(car);
+
+// const boxGeometry = new THREE.BoxGeometry();
+// const boxMaterial = new THREE.MeshStandardMaterial({ color: 0x00FF00 });
+// const box = new THREE.Mesh(boxGeometry, boxMaterial);
+// scene.add(box);
+// box.castShadow = true;
+// box.position.set(0, 0.5, 0);
 
 //create sun like lighting from the top
 const sunLight = new THREE.DirectionalLight(0xFFD700, 6.5); 
@@ -226,42 +392,40 @@ const moveDistance = 2.75; // Adjust the movement speed
 const moveDistanceTurn = 1.75; // Adjust the movement speed
 //const headlightDampingFactor = 0.05;
 const animate = () => {
-  // WASD movement for the box
-   //box.position.z -= moveDistance;
    
-  box.position.z -= moveDistance;
+  car.position.z -= moveDistance;
   if (keyStates.s) {
-    box.position.z += 0;
+    car.position.z += 0;
   }
   if (keyStates.a) {
-    if(box.position.x <= barrierLeft.position.x + 0.75){
-      box.position.x = barrierLeft.position.x + 0.75;
+    if(car.position.x <= barrierLeft.position.x + 0.75){
+      car.position.x = barrierLeft.position.x + 0.75;
     }
 
     else{
-      box.position.x -= moveDistanceTurn;
+      car.position.x -= moveDistanceTurn;
     }
   }
   if (keyStates.d) {
 
-    if(box.position.x >= barrierRight.position.x - 0.75){
-      box.position.x = barrierRight.position.x - 0.75;
+    if(car.position.x >= barrierRight.position.x - 0.75){
+      car.position.x = barrierRight.position.x - 0.75;
     }
 
     else{
-      box.position.x += moveDistanceTurn;
+      car.position.x += moveDistanceTurn;
     }
   } 
 
   // Set the camera position to follow the box
-  camera.position.copy(box.position).add(new THREE.Vector3(0.1, 1.75, 3)); 
+  camera.position.copy(car.position).add(new THREE.Vector3(0.1, 1.75, 3)); 
   // const targetHeadlightPosition = box.position.clone().add(new THREE.Vector3(0, 0.5, 1));
   // headlight.position.lerp(targetHeadlightPosition, headlightDampingFactor);
 
-  camera.lookAt(box.position);
+  camera.lookAt(car.position);
   renderer.render(scene, camera);
 
-  wrapCar(box, maxDistance);
+  wrapCar(car, maxDistance);
 };
 
 const keyStates = {
